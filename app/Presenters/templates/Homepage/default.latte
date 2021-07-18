@@ -1,0 +1,29 @@
+{block content}
+
+
+{control filterForm}
+
+<br>
+<br>
+
+<br>
+<br>
+{snippet itemWrapper}
+	<table class="table">
+			<tbody>
+				{foreach $channels as $channel}
+					<tr>
+						<td>
+							<b>{$channel->order}</b>
+						</td>
+						<td>
+							<strong>{$channel->name}</strong>
+						</td>
+						<td>
+							<i>{$channel->GroupName}</i>
+						</td>
+					</tr>
+				{/foreach}
+			</tbody>
+		</table>
+{/snippet}
