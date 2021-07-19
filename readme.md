@@ -22,4 +22,4 @@ app/Database/moderntvdb.sql
 - Run app in web browser at 
 ```
 http://localhost/moderntv/www/
-```:
+```
