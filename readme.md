@@ -23,7 +23,3 @@ app/Database/moderntvdb.sql
 ```
 http://localhost/moderntv/www/
 ```
-<<<<<<< HEAD
-
-=======
->>>>>>> 115c5fd7c8ee60f399e4583163477a80cff9031e
