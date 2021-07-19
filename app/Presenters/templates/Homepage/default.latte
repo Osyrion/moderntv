@@ -1,29 +1,61 @@
 {block content}
 
+<div class="container">
+	<div class="row justify-content-md-center">
+		<form n:name=filterForm class="col-sm-5 border border-secondary shadow rounded px-4 py-4 mt-5">
+			<div class="row g-2">
+				<div class="col-sm-3"> 
+					<label for="filter" class="col-form-label">Vyhledat:</label>
+				</div>
+				<div class="col-sm-9">
+					<input type="text" n:name="filter" id="filter" class="form-control" placeholder="Zadejte text"
+						onkeyup='document.getElementById("searchFormBtn").click();' autofocus/>
+				</div>
+			</div>
+			<div class="form-check form-check-inline offset-sm-3 mt-3">
+				{input filterOptions}
+			</div>
+			<hr>
+			<span>Žánr:</span>
+			<div class="form-check">
+				{input genre}
+			</div>
 
-{control filterForm}
+			{input send}
+		</form>
+	</div>
+</div>
 
-<br>
-<br>
-
-<br>
-<br>
 {snippet itemWrapper}
-	<table class="table">
-			<tbody>
-				{foreach $channels as $channel}
-					<tr>
-						<td>
-							<b>{$channel->order}</b>
-						</td>
-						<td>
-							<strong>{$channel->name}</strong>
-						</td>
-						<td>
-							<i>{$channel->GroupName}</i>
-						</td>
-					</tr>
-				{/foreach}
-			</tbody>
-		</table>
+<div class="container mt-5">
+	<table class="table table-striped table-primary border border-secondary rounded">
+		<thead>
+			<tr>
+				<th>order</th>
+				<th>název</th>
+				<th>žánr</th>
+				<th>popisek</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach $channels as $channel}
+				<tr>
+					<td>
+						<b>{$channel->order}</b>
+					</td>
+					<td>
+						<p class="texty">{$channel->name}</p>
+					</td>
+					<td>
+						<i>{$channel->GroupName}</i>
+					</td>
+					<td>
+						{$channel->description}
+					</td>
+				</tr>
+			{/foreach}
+		</tbody>
+	</table>
+</div>
 {/snippet}
+

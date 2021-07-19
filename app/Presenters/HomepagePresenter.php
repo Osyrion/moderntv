@@ -20,21 +20,27 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
 		$this->database = $database;
 	}
 
-    public function filterDatabase($search, $arr)
+    public function filterDatabase($search, $arrChannels, $filterOption)
     {
         $search = '%' . $search . '%';
 
-        if ($arr == NULL) {
-            $arr = [10,20,30,40,60,70,80,85,90,100,110];
+        if ($arrChannels == NULL) {
+            $arrChannels = [10,20,30,40,60,70,80,85,90,100,110];
         }
-        //$this->text = $this->database->query('SELECT A.*, B.order as GroupOrder  
-        //FROM moderntvdb.channels as A LEFT JOIN moderntvdb.ChannelGroups as B ON A.ChannelGroup = B.id 
-        //WHERE A.name LIKE ? AND B.order IN (?)', $search, $arr)->fetchAll();
 
-        $this->text = $this->database->query('SELECT * FROM 
-            (SELECT A.*, B.name as GroupName, B.order as GroupOrder  
-                FROM moderntvdb.channels as A LEFT JOIN moderntvdb.ChannelGroups as B ON A.ChannelGroup = B.id) as iptv
-        WHERE name LIKE ? AND GroupOrder IN (?) ORDER BY GroupOrder, iptv.order', $search, $arr)->fetchAll();
+        if ($filterOption == 'name') {
+            $this->text = $this->database->query('SELECT * FROM 
+                (SELECT A.*, B.name as GroupName, B.order as GroupOrder  
+                    FROM moderntvdb.channels as A LEFT JOIN moderntvdb.ChannelGroups as B ON A.ChannelGroup = B.id) as iptv
+                WHERE name LIKE ? AND GroupOrder IN (?) ORDER BY GroupOrder, iptv.order', $search, $arrChannels)->fetchAll();
+        }
+
+        if ($filterOption == 'description') {
+            $this->text = $this->database->query('SELECT * FROM 
+                (SELECT A.*, B.name as GroupName, B.order as GroupOrder  
+                    FROM moderntvdb.channels as A LEFT JOIN moderntvdb.ChannelGroups as B ON A.ChannelGroup = B.id) as iptv
+                WHERE description LIKE ? AND GroupOrder IN (?) ORDER BY GroupOrder, iptv.order', $search, $arrChannels)->fetchAll();
+        }
 
     }
 
@@ -52,9 +58,15 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
 
     protected function createComponentFilterForm(): Form
 	{
+        $options = ['name' => 'název', 'description' => 'popisek'];
+
 		$form = new Form;
-		$form->addText('filter', 'Filter channels:')
+		$form->addText('filter', 'Filtrování kanálů:')
+             ->setHtmlAttribute('id', 'filter')
              ->setHtmlAttribute('onkeyup', 'document.getElementById("searchFormBtn").click();');
+        $form->addRadioList('filterOptions', 'Vyhledání podle:', $options)
+             ->setHtmlAttribute('class', 'form-check-input')
+             ->setValue('name');
         $form->addCheckboxList('genre', 'Žánr:', [
                 10 => 'General',
                 20 => 'Sport',
@@ -68,6 +80,7 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
                 100 => 'Erotic',
                 110 => 'Other',
         ])
+             ->setHtmlAttribute('class','form-check-input')
              ->setHtmlAttribute('onclick', 'document.getElementById("searchFormBtn").click();');
         $form->addSubmit('send', 'Filtrovat')
              ->setHtmlAttribute('class', 'ajax d-none')
@@ -79,11 +92,11 @@ final class HomepagePresenter extends Nette\Application\UI\Presenter
 	public function formSucceeded(Form $form, $data): void
 	{
         $search = $data->filter;
-        $arr = $data->genre;
-
+        $arrChannels = $data->genre;
+        $filterOption = $data->filterOptions;
 
 	
-        $this->filterDatabase($search, $arr);
+        $this->filterDatabase($search, $arrChannels, $filterOption);
         $this->redrawControl('itemWrapper');
 	}
 
